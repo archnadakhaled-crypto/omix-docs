@@ -18,7 +18,7 @@ header.band{background:linear-gradient(90deg,#00aae6,#c81e96 55%,#fa9f1e);color:
 header .wrap{padding-block:28px 22px;display:flex;flex-wrap:wrap;gap:16px;align-items:end;justify-content:space-between}
 h1{font-family:var(--display);font-weight:700;font-size:clamp(26px,4vw,38px);margin:0;line-height:1.1;text-wrap:balance}
 .brand{display:flex;align-items:center;gap:18px}.logo{width:96px;height:auto;border-radius:16px;background:#fff;box-shadow:0 4px 14px rgba(0,0,0,.18);flex:none}@media (max-width:640px){.logo{width:68px}}
-.sub{margin:6px 0 0;opacity:.92;max-width:60ch}
+.brand{display:flex;align-items:center;gap:18px}.logo{width:96px;height:auto;border-radius:16px;background:#fff;padding:6px;flex:none}.sub{margin:6px 0 0;opacity:.92;max-width:60ch}
 .stats{display:flex;gap:18px;font-variant-numeric:tabular-nums;font-size:13px}
 .stats b{display:block;font-family:var(--display);font-size:22px}
 .bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
@@ -51,7 +51,7 @@ section{display:grid;gap:10px;scroll-margin-top:120px}
 </style>
 </head><body>
 <header class="band"><div class="wrap">
-<div class="brand"><img class="logo" src="logo.png" alt="O MIX Construction Chemicals logo" width="310" height="344"><div><h1>O MIX Document Library</h1><p class="sub">Technical Data Sheets, Method Statements, Submittals and pack images for every O MIX product, together with the integrated system documents — organised by product category.</p></div></div>
+<div class="brand"><img class="logo" src="logo.png" alt="O MIX Construction Chemicals logo" width="310" height="344"><div class="brand"><img class="logo" src="logo.png" alt="O MIX logo"><div class="brand"><img class="logo" src="logo.png" alt="O MIX logo"><div class="brand"><img class="logo" src="logo.png" alt="O MIX logo"><div class="brand"><img class="logo" src="logo.png" alt="O MIX logo"><div><h1>O MIX Document Library</h1><p class="sub">Technical Data Sheets, Method Statements, Submittals and pack images for every O MIX product, together with the integrated system documents — organised by product category.</p></div></div></div>
 <div class="stats" id="stats"></div></div></header>
 <div class="bar"><div class="wrap">
 <input id="q" type="search" placeholder="Search a product or system…" aria-label="Search">
