@@ -1,187 +1,108 @@
+
 <!doctype html>
-
 <html lang="en">
-
 <head>
-
 <meta charset="utf-8">
-
 <meta name="viewport" content="width=device-width,initial-scale=1">
-
 <title>O MIX Document Library</title>
-
 <link rel="icon" href="logo.png">
-
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600&display=swap">
 
 <style>
-
 *{box-sizing:border-box}
-
 body{margin:0;background:#f6f7fb;color:#14204a;font:15px/1.5 Inter,system-ui,sans-serif}
-
 [hidden]{display:none!important}
-
 .wrap{max-width:1100px;margin:0 auto;padding:0 16px}
-
 header{background:linear-gradient(90deg,#00aae6,#c81e96 55%,#fa9f1e);color:#fff}
-
 header .wrap{padding-block:24px;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between}
-
 .brand{display:flex;align-items:center;gap:18px}
-
 .logo{width:96px;border-radius:16px;background:#fff;padding:6px}
-
 h1{font:700 clamp(26px,4vw,38px)/1.1 Poppins,sans-serif;margin:0}
-
 .sub{margin:6px 0 0;max-width:60ch;opacity:.92}
-
 .stats{display:flex;gap:18px;font-size:13px}
-
 .stats b{display:block;font:700 22px Poppins,sans-serif}
-
 .bar{position:sticky;top:0;z-index:5;background:#f6f7fb;border-bottom:1px solid #dfe3ee}
-
 .bar .wrap{padding-block:10px;display:flex;gap:10px;flex-wrap:wrap}
-
 #q{flex:1 1 220px;padding:9px 12px;border:1px solid #dfe3ee;border-radius:8px;font:inherit}
-
 .btn{font:600 13px Inter,sans-serif;border:1px solid #dfe3ee;background:#fff;color:#14204a;padding:8px 12px;border-radius:8px;cursor:pointer}
-
 .btn.dark{background:#112052;color:#fff}
-
 #idx{display:flex;gap:6px;overflow-x:auto;flex-basis:100%}
-
 #idx a{font-size:12px;color:#5b6478;text-decoration:none;padding:4px 8px;border-radius:6px;background:#eef1f8;white-space:nowrap}
-
 #st{font-size:13px;color:#5b6478;flex-basis:100%;min-height:1.2em}
-
 main .wrap{padding-block:18px 60px;display:grid;gap:26px}
-
 section{scroll-margin-top:120px}
-
 .head{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:end;border-bottom:2px solid #112052;padding-bottom:6px;margin-bottom:10px}
-
 .head h2{font:600 20px Poppins,sans-serif;margin:0;color:#112052}
-
 .head small{display:block;font:500 12px Inter;color:#e8157e;letter-spacing:.08em;text-transform:uppercase}
-
 .rows{background:#fff;border:1px solid #dfe3ee;border-radius:10px}
-
 .row{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;padding:10px 14px;border-top:1px solid #dfe3ee}
-
 .row:first-child{border-top:0}
-
 .row b{font-weight:600}
-
 .chips{display:flex;flex-wrap:wrap;gap:6px}
-
-/* Product Packaging Image */
-
 .product-info{
-
   display:flex;
-
   align-items:center;
-
   gap:12px;
-
   min-width:220px;
-
   flex:1 1 220px;
-
 }
-
 .pack-thumb{
-
   width:70px;
-
   height:70px;
-
   object-fit:contain;
-
   background:#fff;
-
   border:1px solid #dfe3ee;
-
   border-radius:8px;
-
   padding:4px;
-
   flex-shrink:0;
-
 }
-
-.product-name{font-weight:600}
-
+.product-details{min-width:0}
+.product-name{font-weight:600;display:block}
+.product-description{
+  margin:3px 0 0;
+  font-size:12px;
+  line-height:1.4;
+  color:#777;
+  font-weight:400;
+}
 .chip{font:500 12px Inter,sans-serif;background:#eef1f8;color:#14204a;border:0;border-radius:999px;padding:5px 10px;cursor:pointer}
-
 .chip span{color:#5b6478;margin-left:4px}
-
 .chip.ok{background:#d3eee1}
-
 @media(max-width:640px){
-
   .logo{width:68px}
-
   .row{align-items:flex-start}
-
   .product-info{min-width:100%;flex-basis:100%}
-
   .chips{padding-left:0}
-
 }
-
 </style>
-
 </head>
 
 <body>
 
 <header>
-
 <div class="wrap">
-
 <div class="brand">
-
 <img class="logo" src="logo.png" alt="O MIX logo">
-
 <div>
-
 <h1>O MIX Document Library</h1>
-
 <p class="sub">Technical Data Sheets, Method Statements, Submittals and pack images for every O MIX product, together with the integrated system documents — organised by product category.</p>
-
 </div>
-
 </div>
-
 <div class="stats" id="stats"></div>
-
 </div>
-
 </header>
 
 <div class="bar">
-
 <div class="wrap">
-
 <input id="q" type="search" placeholder="Search a product or system…">
-
 <button class="btn dark" id="all">Download everything (.zip)</button>
-
 <nav id="idx"></nav>
-
 <div id="st"></div>
-
 </div>
-
 </div>
 
 <main>
-
 <div class="wrap" id="list"></div>
-
 </main>
 
 <script src="jszip.min.js"></script>
@@ -193,275 +114,252 @@ section{scroll-margin-top:120px}
 const DATA=[
 
 ["Protective Coating",[
-
 ["Freezo Coat","freezo-coat",363,289,828,207],
-
 ["Mixcoat Novolac","mixcoat-novolac",437,296,922,216],
-
 ["Mixcoat PU","mixcoat-pu",372,304,857,208],
-
 ["O-Defoamer","o-defoamer",316,285,671,139],
-
 ["O-Guard EP","o-guard-ep",367,291,837,210],
-
 ["O-Guard FR","o-guard-fr",334,289,738,162],
-
 ["O-Mastic","o-mastic",362,294,849,225],
-
 ["O-Prime SB","o-prime-sb",373,302,872,228],
-
 ["O-Prime ST","o-prime-st",372,303,873,228],
-
 ["O-Prime ZP","o-prime-zp",363,288,847,227],
-
 ["O-Zinc I","o-zinc-i",361,291,842,222],
-
 ["Safe Coat AC","safe-coat-ac",334,281,730,165],
-
 ["Stone Sealer AC","stone-sealer-ac",332,282,730,164],
-
 ["Stone Sealer BS","stone-sealer-bs",317,292,662,119],
-
 ["Stone Sealer WR","stone-sealer-wr",313,278,646,121]
-
 ]],
 
 ["Flooring",[
-
 ["Mixcoat GF","mixcoat-gf",365,288,850,227],
-
 ["Mixcoat SB","mixcoat-sb",363,289,851,229],
-
 ["O-Filler","o-filler",320,287,679,135],
-
 ["O-Mix LH","o-mix-lh",312,282,658,133],
-
 ["O-Mix SL","o-mix-sl",392,294,906,240],
-
 ["O-Poxy Classic","o-poxy-classic",377,297,859,212],
-
 ["O-Poxy Edge","o-poxy-edge",377,297,861,213],
-
 ["O-Poxy Plus","o-poxy-plus",376,297,858,211],
-
 ["O-Prime SF","o-prime-sf",372,291,849,209],
-
 ["O-Prime WS","o-prime-ws",366,289,839,211],
-
 ["O-Putty","o-putty",360,289,841,225],
-
 ["Road Mark AC","road-mark-ac",331,281,729,165],
-
 ["Road Mark PU","road-mark-pu",365,288,852,229],
-
 ["Road Mark WB","road-mark-wb",331,281,727,164]
-
 ]],
 
 ["Waterproofing",[
-
 ["Leakinject AC","leakinject-ac",371,287,833,217],
-
 ["Leakinject PU","leakinject-pu",333,288,736,161],
-
 ["Mixseal RB","mixseal-rb",314,275,658,140],
-
 ["Mixseal WB","mixseal-wb",314,275,658,140],
-
 ["O-Seal PVC","o-seal-pvc",301,280,600,98],
-
 ["O-Swell","o-swell",315,284,642,100],
-
 ["Roofguard AC","roofguard-ac",362,302,855,220],
-
 ["Roofguard PU","roofguard-pu",375,293,845,210],
-
 ["Roofguard PUR","roofguard-pur",337,282,730,163],
-
 ["Waterbar","waterbar",374,292,878,247]
-
 ]],
 
 ["Repair and Grouting Materials",[
-
 ["Anchormix EP","anchormix-ep",363,288,820,199],
-
 ["Cemix Crete","cemix-crete",318,281,678,140],
-
 ["Cemix Grout","cemix-grout",318,282,673,137],
-
 ["Epogrout","epogrout",367,288,832,206],
-
 ["O-Patch C","o-patch-c",319,284,680,137]
-
 ]],
 
 ["Decorative Flooring",[
-
 ["TerraFloor C","terrafloor-c",391,297,914,249],
-
 ["TerraFloor EP","terrafloor-ep",398,304,926,250]
-
 ]],
 
 ["Decorative Paints",[
-
 ["Carbomix AC","carbomix-ac",331,281,721,161],
-
 ["Carbomix AC Max","carbomix-ac-max",328,280,721,168],
-
 ["Carboseal","carboseal",329,281,723,158],
-
 ["Decora PU","decora-pu",364,295,851,227]
-
 ]],
 
 ["Bonding Agents",[
-
 ["Addmix VAE","addmix-vae",318,274,657,138],
-
 ["Bondmix SBR","bondmix-sbr",312,280,648,120],
-
 ["Bondmix SBR Plus","bondmix-sbr-plus",312,276,644,122]
-
 ]],
 
 ["Jointing and Tiling",[
-
 ["Addmix HPMC","addmix-hpmc",324,271,671,142],
-
 ["Back-fill","back-fill",344,281,760,198],
-
 ["Mixseal PU","mixseal-pu",324,292,633,102],
-
 ["O-Flex PVC","o-flex-pvc",378,299,869,210],
-
 ["O-Silica","o-silica",314,266,648,135]
-
 ]],
 
 ["Sport Court Systems",[
-
 ["Acrycourt CU","acrycourt-cu",332,281,729,163],
-
 ["Acrycourt FC","acrycourt-fc",335,284,736,166],
-
 ["Acrycourt PAC","acrycourt-pac",330,283,725,163],
-
 ["Acrycourt RAC","acrycourt-rac",332,284,730,162],
-
 ["Bondmix WB","bondmix-wb",369,290,844,211],
-
 ["Mixflex EPDM","mixflex-epdm",316,281,669,138],
-
 ["Mixflex PU Binder","mixflex-pu-binder",327,287,722,168],
-
 ["Mixflex SBR","mixflex-sbr",316,270,657,136]
-
 ]],
 
 ["Thermal Insulation",[
-
 ["Roofguard Combo Mix","roofguard-combo-mix",354,288,815,219]
-
 ]],
 
 ["Concrete Admixture",[
-
 ["Addmix WR","addmix-wr",316,269,658,138],
-
 ["Bondmix EP","bondmix-ep",361,286,829,209],
-
 ["Micromix Deco 1","micromix-deco-1",324,288,690,138],
-
 ["Micromix Deco 2","micromix-deco-2",322,288,689,139]
-
 ]],
 
 ["Accessories",[
-
 ["Addmix HPS","addmix-hps",322,271,668,140],
-
 ["Addmix PP","addmix-pp",317,270,661,138],
-
 ["Addmix SF","addmix-sf",322,265,809,138],
-
 ["Beadmix","beadmix",322,270,664,136],
-
 ["Conducto Tape","conducto-tape",320,274,696,168],
-
 ["Fiberlock","fiberlock",305,273,618,116],
-
 ["Geomat","geomat",306,272,617,116],
-
 ["Terra Flakes","terra-flakes",318,274,669,138]
-
 ]],
 
 ["Solutions (Systems)",[
-
 ["Acid Lock Pro","acid-lock-pro",0,364,1298,156],
-
 ["O Poxyguard","o-poxyguard",0,356,1121,183],
-
 ["Freezo Coat One","freezo-coat-one",0,354,1204,153],
-
 ["Mixcoat Pro","mixcoat-pro",0,357,1219,155],
-
 ["O MIX Safecoat","o-mix-safecoat",0,332,1123,184],
-
 ["O Floor Classic","o-floor-classic",0,365,1229,154],
-
 ["O MIX Floor MD","o-mix-floor-md",0,366,1350,137],
-
 ["O Floor Edge","o-floor-edge",0,365,1350,137],
-
 ["O Self Floor","o-self-floor",0,353,1225,152],
-
 ["O Roof Edge","o-roof-edge",0,369,1191,168],
-
 ["O Roof One","o-roof-one",0,348,1086,178],
-
 ["O MIX LAM HD Pro","o-mix-lam-hd-pro",0,355,1217,154],
-
 ["O MIX Hard Acrylic","o-mix-hard-acrylic",0,344,1148,167],
-
 ["O MIX Soft Acrylic","o-mix-soft-acrylic",0,366,1259,152],
-
 ["O MIX MicroArt","o-mix-microart",0,365,1296,156],
-
 ["O MIX MicroArt HD-Walls","o-mix-microart-hd-walls",0,360,1206,169],
-
 ["Micromix Deco","micromix-deco",0,388,1530,134],
-
 ["Terraflakes Floor","terraflakes-floor",0,379,1478,129]
-
 ]]
 
 ];
 
+// Product descriptions sourced from the O MIX product register.
+// Products without a confirmed description are intentionally left blank.
+
+const DESCRIPTIONS={
+
+"Freezo Coat":"Solvent-free flexible polyurethane coating for cold rooms, resistant to thermal shock and chemicals.",
+"Mixcoat Novolac":"Solvent-free novolac epoxy coating for chemical-resistant protection and epoxy mortar systems.",
+"Mixcoat PU":"High-performance liquid waterproofing coating for roofs, terraces, façades and ceilings.",
+"O-Defoamer":"Mineral-oil-based defoamer for aqueous systems.",
+"O-Guard EP":"Two-component, solvent-free epoxy coating for internal lining of potable water tanks.",
+"O-Guard FR":"Water-based intumescent coating providing fire protection for structural steel.",
+"O-Mastic":"Two-component epoxy mastic for high-build corrosion protection in industrial and marine environments.",
+"O-Prime SB":"Two-component solvent-based epoxy coating for protective applications on steel and mineral surfaces.",
+"O-Prime ST":"Two-component epoxy primer for steel and concrete surfaces.",
+"O-Prime ZP":"High-build epoxy zinc phosphate primer providing corrosion protection and adhesion to steel.",
+"O-Zinc I":"Two-component, zinc-rich epoxy primer providing anti-corrosion protection for steel.",
+"Safe Coat AC":"Water-based antimicrobial coating for clean rooms and hygienic environments.",
+"Stone Sealer AC":"Water-based acrylic sealer for protecting concrete, stone, pavers and masonry surfaces.",
+"Stone Sealer BS":"Water-based silane-siloxane treatment that reduces water absorption in stone and concrete.",
+"Stone Sealer WR":"Penetrating silicone-based water repellent for masonry and concrete surfaces.",
+
+"Mixcoat GF":"Glass-flake-reinforced epoxy coating for protection in severe corrosive environments.",
+"Mixcoat SB":"Two-component epoxy primer that penetrates and seals concrete surfaces.",
+"O-Filler":"Modified polymer powder filler with a reactive resin matrix.",
+"O-Mix LH":"Water-based copolymer liquid for dust suppression and sand stabilization.",
+"O-Mix SL":"Three-component self-levelling epoxy floor system providing a seamless, glossy and hygienic finish.",
+"O-Poxy Classic":"Two-component solvent-based epoxy coating for concrete, steel and non-ferrous metal surfaces.",
+"O-Poxy Edge":"Solvent-free epoxy floor coating offering high durability and resistance to chemicals and abrasion.",
+"O-Poxy Plus":"Two-component solvent-free epoxy floor coating for concrete and metal surfaces.",
+"O-Prime SF":"Two-component solvent-free epoxy primer for penetrating and sealing concrete surfaces.",
+"O-Prime WS":"Two-component high-solids, rust-inhibitive epoxy primer for wet-on-wet application.",
+"O-Putty":"Two-component solvent-based epoxy filler for high-performance repairs.",
+"Road Mark AC":"Acrylic resin coating for road and floor marking, offering adhesion and weather resistance.",
+"Road Mark PU":"Two-component polyurethane road-marking system for high-traffic asphalt, concrete and interlock surfaces.",
+"Road Mark WB":"Water-based acrylic base coat for anti-skid and road-marking systems.",
+
+"Leakinject AC":"Flexible, water-reactive acrylic injection system for sealing cracks, joints and leak paths.",
+"Leakinject PU":"Two-component polyurethane injection foam for sealing water-bearing cracks and joints.",
+"Mixseal RB":"Rubberized bitumen emulsion for priming and waterproofing applications.",
+"Mixseal WB":"Cold-applied, water-based bitumen emulsion for priming and waterproofing.",
+"O-Seal PVC":"Flexible PVC waterproofing membrane for tanks, canals and reservoirs.",
+"O-Swell":"Hydrophilic synthetic rubber waterstop that swells on contact with water to seal concrete joints.",
+"Roofguard AC":"Flexible water-based acrylic coating forming an elastic waterproof barrier.",
+"Roofguard PU":"Two-component, solvent-free, liquid-applied polyurethane waterproofing system.",
+"Roofguard PUR":"Flexible waterproofing system for roofs, terraces, ceilings and façades.",
+"Waterbar":"Flexible PVC waterstop for expansion and construction joints in concrete.",
+
+"Anchormix EP":"Two-component solvent-free epoxy paste adhesive for structural bonding and concrete repair.",
+"Cemix Crete":"Free-flowing micro concrete for structural grouting and repairs under heavy machinery and foundations.",
+"Cemix Grout":"High-flow, non-shrink cementitious grout with high early and ultimate strength.",
+"Epogrout":"Two-component water-displacing epoxy grout for high-strength repairs to concrete, timber and steel.",
+"O-Patch C":"Fiber-reinforced polymer-modified mortar for vertical and overhead concrete repairs.",
+
+"TerraFloor C":"Durable cementitious flooring system based on binders and aggregates.",
+"TerraFloor EP":"Epoxy flooring system providing a seamless and durable finish.",
+
+"Carbomix AC":"Acrylic anti-carbonation coating protecting concrete against CO₂ and moisture while allowing vapour diffusion.",
+"Carbomix AC Max":"Solvent-free acrylic coating protecting concrete and steel against CO₂ and chloride ingress.",
+"Carboseal":"Acrylic polymer sealer for interior and exterior surfaces.",
+"Decora PU":"Matt transparent acrylic polyurethane coating for concrete and decorative floors.",
+
+"Addmix VAE":"Vinyl acetate-ethylene polymer dispersion for flexible, water-resistant construction formulations.",
+"Bondmix SBR":"SBR-based bonding agent improving adhesion, flexibility and water resistance of cementitious mortars.",
+"Bondmix SBR Plus":"SBR bonding agent for concrete, mortar and cement mixes to improve bonding and waterproofing.",
+
+"Addmix HPMC":"Modified HPMC cellulose ether powder for improving dry-mix mortar properties.",
+"Back-fill":"Closed-cell polyethylene foam backing rod for expansion joints beneath sealants.",
+"Mixseal PU":"One-component, moisture-curing polyurethane sealant and adhesive with high flexibility and weather resistance.",
+"O-Flex PVC":"Flexible PVC tape and epoxy adhesive system for sealing expansion joints and cracks.",
+"O-Silica":"Highly reactive silica fume additive for enhancing concrete and cementitious mortars.",
+
+"Acrycourt CU":"Acrylic rubberized cushion layer providing resilience and shock absorption for sports courts.",
+"Acrycourt FC":"Water-based thermoplastic acrylic finish coat for sports courts and decorative concrete.",
+"Acrycourt PAC":"Acrylic emulsion coating for indoor and outdoor sports floors.",
+"Acrycourt RAC":"Acrylic emulsion filler for sealing and retexturing asphalt and concrete before sports surfacing.",
+"Bondmix WB":"Water-based epoxy bonding primer for concrete and masonry under sports coating systems.",
+"Mixflex EPDM":"UV-stable EPDM rubber granules for sports and recreational flooring.",
+"Mixflex PU Binder":"One-component, moisture-curing polyurethane binder for SBR and EPDM rubber granules.",
+"Mixflex SBR":"Recycled SBR rubber granules for sports flooring and artificial turf.",
+
+"Roofguard Combo Mix":"Spray-applied polyurethane foam system for thermal and acoustic insulation.",
+
+"Bondmix EP":"Solvent-free, two-component epoxy bonding agent for joining old and new concrete.",
+"Micromix Deco 1":"Cement-based micro base coat for smooth, seamless concrete-effect surfaces.",
+"Micromix Deco 2":"Ultra-fine cement-based microcement finishing coat for decorative concrete-effect surfaces.",
+
+"Addmix HPS":"Hydroxypropyl starch ether for dry-mix construction materials.",
+"Addmix PP":"Polypropylene micro monofilament fibers for concrete.",
+"Addmix SF":"Steel fibers for concrete reinforcement.",
+"Beadmix":"Iron-free spherical mineral glass beads.",
+"Conducto Tape":"Self-adhesive conductive copper tape for grounding in ESD epoxy floors.",
+"Fiberlock":"Woven fiberglass fabric manufactured from ECR-grade glass fibers.",
+"Geomat":"Non-woven polyester and polypropylene geotextile.",
+"Terra Flakes":"Decorative flakes for seamless flooring systems."
+
+};
+
 const KINDS=[
-
 ["TDS","tds.pdf","TDs"],
-
 ["Method Statement","method-statement.pdf","MOS"],
-
 ["Submittal","submittal.pdf","Submittal"],
-
 ["Pack Image","pack.jpg","others"]
-
 ];
 
 const st=document.getElementById('st');
-
 const idx=document.getElementById('idx');
-
 const list=document.getElementById('list');
-
 const stats=document.getElementById('stats');
-
 const q=document.getElementById('q');
-
 const N=DATA.length-1;
 
 const mb=k=>(k/1024).toFixed(2)+' MB';
@@ -469,53 +367,33 @@ const mb=k=>(k/1024).toFixed(2)+' MB';
 function files(ci,p,pi){
 
  const sys=ci===N;
-
  const dir='d/'+(sys?'systems':'category-'+(ci+1))+'/'+p[1]+'/omix-'+p[1]+(sys?'-system':'')+'-';
-
  const base='OMIX_'+p[0].replace(/[^A-Za-z0-9]+/g,'_')+(sys?'_System':'');
 
  return KINDS.map((k,i)=>({
-
   kind:k[0],
-
   sub:k[2],
-
   kb:p[2+i],
-
   path:sys&&i===3?dir.slice(0,-1)+'.jpg':dir+k[1],
-
   name:base+'_'+k[0].replace(/ /g,'_').replace('Pack_Image',sys?'':'Pack').replace(/^_|_$/g,'')+(i===3?'.jpg':'.pdf')
-
  })).filter(f=>f.kb>0).map(f=>(f.name=f.name.replace('__','_').replace('_.jpg','.jpg'),f));
 
 }
 
 function save(name,blob){
-
  const a=document.createElement('a');
-
  a.href=URL.createObjectURL(blob);
-
  a.download=name;
-
  document.body.append(a);
-
  a.click();
-
  a.remove();
-
  st.textContent='Downloaded '+name;
-
 }
 
 async function get(p){
-
  const r=await fetch(p);
-
  if(!r.ok)throw Error(p);
-
  return r.blob();
-
 }
 
 async function zip(name,list,btn){
@@ -523,35 +401,25 @@ async function zip(name,list,btn){
  btn.disabled=true;
 
  try{
-
   const z=new JSZip();
-
   let i=0;
 
   for(const [path,f] of list){
-
    st.textContent='Preparing '+name+' … '+(++i)+' / '+list.length;
-
    z.file(path,await get(f.path));
-
   }
 
   st.textContent='Compressing …';
-
   save(name,await z.generateAsync({type:'blob'}));
 
  }catch(e){
-
   st.textContent='Could not load a file: '+e.message;
-
  }
 
  btn.disabled=false;
-
 }
 
 const catFolder=(ci,t)=>ci===N?'Solutions':'Data sheet/Category '+(ci+1)+' - '+t;
-
 const prodFolder=(ci,p,pi)=>ci===N?String(pi+1).padStart(2,'0')+'. '+p[0]:p[0];
 
 let all=[],nf=0,nkb=0;
@@ -559,29 +427,20 @@ let all=[],nf=0,nkb=0;
 DATA.forEach(([title,items],ci)=>{
 
  const sys=ci===N;
-
  const label=sys?'Systems':'Category '+(ci+1);
 
  const a=document.createElement('a');
-
  a.href='#c'+ci;
-
  a.textContent=sys?'Systems':'Cat '+(ci+1)+' · '+title;
-
  idx.append(a);
 
  const sec=document.createElement('section');
-
  sec.id='c'+ci;
-
  sec.innerHTML=`<div class="head"><h2><small>${label}</small>${title}</h2></div><div class="rows"></div>`;
 
  const cb=document.createElement('button');
-
  cb.className='btn';
-
  cb.textContent=sys?'Download all systems (.zip)':'Download category (.zip)';
-
  sec.firstChild.append(cb);
 
  let catList=[];
@@ -591,47 +450,46 @@ DATA.forEach(([title,items],ci)=>{
   const fs=files(ci,p,pi);
 
   const row=document.createElement('div');
-
   row.className='row';
-
   row.dataset.k=(p[0]+' '+title).toLowerCase();
 
-  // Product image and name
+  // Product image, name and description
 
   const info=document.createElement('div');
-
   info.className='product-info';
 
   const packFile=fs.find(f=>f.kind==='Pack Image');
 
   if(packFile){
-
    const img=document.createElement('img');
-
    img.className='pack-thumb';
-
    img.src=packFile.path;
-
    img.alt=p[0]+' Packaging';
-
    img.loading='lazy';
-
    img.onerror=()=>img.hidden=true;
-
    info.append(img);
-
   }
 
+  const details=document.createElement('div');
+  details.className='product-details';
+
   const name=document.createElement('b');
-
   name.className='product-name';
-
   name.textContent=p[0];
+  details.append(name);
 
-  info.append(name);
+  const descriptionText=DESCRIPTIONS[p[0]];
+
+  if(descriptionText){
+   const description=document.createElement('p');
+   description.className='product-description';
+   description.textContent=descriptionText;
+   details.append(description);
+  }
+
+  info.append(details);
 
   const ch=document.createElement('div');
-
   ch.className='chips';
 
   row.append(info,ch);
@@ -641,79 +499,54 @@ DATA.forEach(([title,items],ci)=>{
   fs.forEach(f=>{
 
    nf++;
-
    nkb+=f.kb;
 
    const b=document.createElement('button');
-
    b.className='chip';
-
    b.innerHTML=f.kind+(f.kind==='Pack Image'?'':' PDF')+`<span>${mb(f.kb)}</span>`;
 
    b.onclick=async()=>{
-
     st.textContent='Fetching '+f.name+' …';
 
     try{
-
      save(f.name,await get(f.path));
-
      b.classList.add('ok');
-
     }catch(e){
-
      st.textContent='Could not load '+f.name;
-
     }
-
    };
 
    ch.append(b);
 
    catList.push([
-
     prodFolder(ci,p,pi)+'/'+f.sub+'/'+f.name,f
-
    ]);
 
    all.push([
-
     catFolder(ci,title)+'/'+prodFolder(ci,p,pi)+'/'+f.sub+'/'+f.name,f
-
    ]);
 
   });
 
   const zb=document.createElement('button');
-
   zb.className='chip';
-
   zb.textContent='All (.zip)';
 
   zb.onclick=()=>zip(
-
    'OMIX_'+p[0].replace(/[^A-Za-z0-9]+/g,'_')+'.zip',
-
    fs.map(f=>[f.sub+'/'+f.name,f]),
-
    zb
-
   );
 
   ch.append(zb);
-
   sec.lastChild.append(row);
 
  });
 
  cb.onclick=()=>zip(
-
   'OMIX_'+catFolder(ci,title).split('/').pop().replace(/[^A-Za-z0-9]+/g,'_')+'.zip',
-
   catList,
-
   cb
-
  );
 
  list.append(sec);
@@ -721,17 +554,12 @@ DATA.forEach(([title,items],ci)=>{
 });
 
 stats.innerHTML=`
-
 <div><b>${DATA.slice(0,N).reduce((a,c)=>a+c[1].length,0)}</b>products</div>
-
 <div><b>${DATA[N][1].length}</b>systems</div>
-
 <div><b>${nf}</b>files · ${(nkb/1024).toFixed(1)} MB</div>
-
 `;
 
 document.getElementById('all').onclick=e=>
-
  zip('OMIX_Document_Library.zip',all,e.currentTarget);
 
 q.oninput=()=>{
@@ -739,21 +567,15 @@ q.oninput=()=>{
  const v=q.value.trim().toLowerCase();
 
  document.querySelectorAll('.row').forEach(r=>{
-
   r.hidden=v&&!r.dataset.k.includes(v);
-
  });
 
  document.querySelectorAll('section').forEach(s=>{
-
   s.hidden=v&&![...s.querySelectorAll('.row')].some(r=>!r.hidden);
-
  });
 
 };
 
 </script>
-
 </body>
-
 </html>
