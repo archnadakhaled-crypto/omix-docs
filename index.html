@@ -38,32 +38,11 @@ section{scroll-margin-top:120px}
 .row:first-child{border-top:0}
 .row b{font-weight:600}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
-.product-info{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  min-width:220px;
-  flex:1 1 220px;
-}
-.pack-thumb{
-  width:70px;
-  height:70px;
-  object-fit:contain;
-  background:#fff;
-  border:1px solid #dfe3ee;
-  border-radius:8px;
-  padding:4px;
-  flex-shrink:0;
-}
-.product-details{min-width:0}
+.product-info{display:flex;align-items:flex-start;gap:12px;min-width:220px;flex:1 1 220px}
+.pack-thumb{width:70px;height:70px;object-fit:contain;background:#fff;border:1px solid #dfe3ee;border-radius:8px;padding:4px;flex-shrink:0}
+.product-details{min-width:0;flex:1;text-align:left}
 .product-name{font-weight:600;display:block}
-.product-description{
-  margin:3px 0 0;
-  font-size:12px;
-  line-height:1.4;
-  color:#777;
-  font-weight:400;
-}
+.product-description{margin:3px 0 0;font-size:12px;line-height:1.4;color:#777;font-weight:400}
 .chip{font:500 12px Inter,sans-serif;background:#eef1f8;color:#14204a;border:0;border-radius:999px;padding:5px 10px;cursor:pointer}
 .chip span{color:#5b6478;margin-left:4px}
 .chip.ok{background:#d3eee1}
@@ -77,7 +56,6 @@ section{scroll-margin-top:120px}
 </head>
 
 <body>
-
 <header>
 <div class="wrap">
 <div class="brand">
@@ -105,7 +83,6 @@ section{scroll-margin-top:120px}
 </main>
 
 <script src="jszip.min.js"></script>
-
 <script>
 
 // [category title, [[product name, folder, TDS KB, MS KB, Submittal KB, Pack KB], ...]]
@@ -250,8 +227,7 @@ const DATA=[
 
 ];
 
-// Product descriptions sourced from the O MIX product register.
-// Products without a confirmed description are intentionally left blank.
+// Product descriptions
 
 const DESCRIPTIONS={
 
@@ -344,6 +320,48 @@ const DESCRIPTIONS={
 "Fiberlock":"Woven fiberglass fabric manufactured from ECR-grade glass fibers.",
 "Geomat":"Non-woven polyester and polypropylene geotextile.",
 "Terra Flakes":"Decorative flakes for seamless flooring systems."
+
+};
+
+// System descriptions
+
+const SYSTEM_DESCRIPTIONS={
+
+"Acid Lock Pro":"Protective system designed to provide resistance against acid exposure in demanding industrial environments.",
+
+"O Poxyguard":"Epoxy-based protective system for safeguarding concrete surfaces against wear and chemical exposure.",
+
+"Freezo Coat One":"Protective coating system designed for cold storage facilities and low-temperature environments.",
+
+"Mixcoat Pro":"Multi-purpose protective coating system for durable surface protection in construction and industrial applications.",
+
+"O MIX Safecoat":"Protective coating system designed for hygienic environments where cleanability and surface protection are essential.",
+
+"O Floor Classic":"Epoxy flooring system designed to provide a durable, seamless and easy-to-clean floor finish.",
+
+"O MIX Floor MD":"Medium-duty flooring system designed to provide durable surface protection for areas with moderate traffic.",
+
+"O Floor Edge":"Heavy-duty flooring system designed for demanding environments requiring enhanced surface durability.",
+
+"O Self Floor":"Self-levelling flooring system designed to create smooth, seamless and uniform floor surfaces.",
+
+"O Roof Edge":"Roof waterproofing system designed to protect exposed roof surfaces against water penetration and weathering.",
+
+"O Roof One":"Integrated roof waterproofing system designed to provide continuous protection against water ingress.",
+
+"O MIX LAM HD Pro":"High-performance laminate flooring system designed for durable surface protection in demanding applications.",
+
+"O MIX Hard Acrylic":"Hard acrylic flooring system designed for durable surfaces exposed to regular use and traffic.",
+
+"O MIX Soft Acrylic":"Flexible acrylic flooring system designed to provide a resilient surface for recreational and sports applications.",
+
+"O MIX MicroArt":"Decorative microcement system designed to create seamless, contemporary architectural finishes.",
+
+"O MIX MicroArt HD-Walls":"Decorative wall finishing system designed to create seamless, textured architectural surfaces.",
+
+"Micromix Deco":"Decorative microcement system designed to achieve continuous concrete-effect finishes on interior surfaces.",
+
+"Terraflakes Floor":"Decorative flake flooring system designed to create seamless, textured and visually distinctive floor finishes."
 
 };
 
@@ -477,7 +495,7 @@ DATA.forEach(([title,items],ci)=>{
   name.textContent=p[0];
   details.append(name);
 
-  const descriptionText=DESCRIPTIONS[p[0]];
+  const descriptionText=sys?SYSTEM_DESCRIPTIONS[p[0]]:DESCRIPTIONS[p[0]];
 
   if(descriptionText){
    const description=document.createElement('p');
