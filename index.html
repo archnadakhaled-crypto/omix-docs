@@ -60,14 +60,22 @@ a.row:hover{background:#f3f5fb}
 .meta{font-size:13px;color:#5b6478}
 .panel{background:#fff;border:1px solid #dfe3ee;border-radius:14px;padding:20px;margin-top:16px}
 .panel h3{font:600 17px Poppins,sans-serif;margin:0 0 12px;color:#112052}
-.files{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
-.file{text-align:left;font:inherit;color:#14204a;background:#f6f7fb;border:1px solid #dfe3ee;border-radius:10px;padding:14px 16px;cursor:pointer;display:flex;flex-direction:column;gap:2px}
-.file::before{content:"⬇";color:#e8157e;font-size:18px;margin-bottom:4px}
-.file:hover{border-color:#112052;background:#fff}
+.files{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.file{color:#14204a;background:#f6f7fb;border:1px solid #dfe3ee;border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:2px}
+.fa{display:flex;gap:6px;margin-top:10px}
+.fa .btn{flex:1;min-width:0;padding:8px 6px}
+#pvd{width:min(960px,100vw - 24px);height:calc(100vh - 24px);max-height:none;max-width:none;padding:0;border:0;border-radius:14px;display:none;flex-direction:column;overflow:hidden;background:#fff}
+#pvd[open]{display:flex}
+#pvd::backdrop{background:rgba(17,32,82,.6)}
+.pv-head{display:flex;gap:8px;align-items:center;padding:10px 12px;border-bottom:1px solid #dfe3ee}
+.pv-title{flex:1;min-width:0;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pv-body{flex:1;overflow:auto;background:#e9ecf3;padding:12px;display:flex;flex-direction:column;align-items:center;gap:12px}
+.pv-page{max-width:100%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.15)}
+.pv-msg{margin:40px 0;color:#5b6478}
+.pv-msg a{color:#112052}
 .file b{font-weight:600}
 .file small{color:#5b6478}
 .file.ok{background:#d3eee1;border-color:#9fd6bb}
-.file.ok::before{content:"✓"}
 .all{margin-top:14px;width:100%;padding:12px}
 @media(max-width:640px){
   .hero img{width:120px;height:120px}
@@ -105,6 +113,15 @@ a.row:hover{background:#f3f5fb}
 <main id="lv">
 <div class="wrap" id="list"></div>
 </main>
+
+<dialog id="pvd" aria-label="File preview">
+<div class="pv-head">
+<b class="pv-title"></b>
+<button class="btn dark pv-dl">Download</button>
+<button class="btn pv-x" aria-label="Close preview">✕</button>
+</div>
+<div class="pv-body"></div>
+</dialog>
 
 <main id="pv" hidden>
 <div class="wrap" id="pvw" style="display:block"></div>
@@ -625,6 +642,84 @@ function showList(){
  else window.scrollTo(0,listScroll);
 }
 
+async function download(f,b,done){
+ const t=b.textContent;
+ b.disabled=true;
+ b.textContent='…';
+ st.textContent='Fetching '+f.name+' …';
+ try{save(f.name,await get(f.path));done&&done();b.textContent='Downloaded ✓';}
+ catch(e){b.textContent='Retry';}
+ b.disabled=false;
+ setTimeout(()=>{if(b.textContent==='Downloaded ✓')b.textContent=t;},2500);
+}
+
+// ---------- File preview ----------
+const dlg=document.getElementById('pvd');
+const dlgBody=dlg.querySelector('.pv-body');
+let pdfReady,pvToken=0;
+
+function loadPdfJs(){
+ return pdfReady||=new Promise((ok,bad)=>{
+  const s=document.createElement('script');
+  s.src='pdfjs/pdf.min.js';
+  s.onload=()=>{pdfjsLib.GlobalWorkerOptions.workerSrc='pdfjs/pdf.worker.min.js';ok(pdfjsLib);};
+  s.onerror=()=>{pdfReady=null;bad(Error('viewer'));};
+  document.head.append(s);
+ });
+}
+
+async function preview(f,product,done){
+ const token=++pvToken;
+ dlg.querySelector('.pv-title').textContent=product+' – '+f.kind;
+ const db=dlg.querySelector('.pv-dl');
+ db.textContent='Download';
+ db.onclick=()=>download(f,db,done);
+ dlgBody.replaceChildren(el('p','pv-msg','Loading preview …'));
+ dlg.showModal();
+ document.body.style.overflow='hidden';
+
+ if(f.kind==='Pack Image'){
+  const img=el('img','pv-page');
+  img.src=f.path;
+  img.alt=product+' packaging';
+  dlgBody.replaceChildren(img);
+  return;
+ }
+
+ try{
+  const lib=await loadPdfJs();
+  const pdf=await lib.getDocument(f.path).promise;
+  if(token!==pvToken)return;
+  dlgBody.replaceChildren();
+  const w=Math.min(dlgBody.clientWidth-24,900);
+  for(let i=1;i<=pdf.numPages;i++){
+   const page=await pdf.getPage(i);
+   if(token!==pvToken)return;
+   const v1=page.getViewport({scale:1});
+   const scale=w/v1.width;
+   const dpr=window.devicePixelRatio||1;
+   const vp=page.getViewport({scale:scale*dpr});
+   const c=el('canvas','pv-page');
+   c.width=vp.width;c.height=vp.height;
+   c.style.width=w+'px';
+   dlgBody.append(c);
+   await page.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;
+  }
+ }catch(e){
+  if(token!==pvToken)return;
+  const m=el('p','pv-msg','Preview isn’t available. ');
+  const a=el('a',null,'Open the file');
+  a.href=f.path;a.target='_blank';a.rel='noopener';
+  m.append(a);
+  dlgBody.replaceChildren(m);
+ }
+}
+
+function closePreview(){pvToken++;dlg.close();}
+dlg.querySelector('.pv-x').onclick=closePreview;
+dlg.addEventListener('close',()=>{pvToken++;document.body.style.overflow='';});
+dlg.addEventListener('click',e=>{if(e.target===dlg)closePreview();});
+
 function showProduct(key){
 
  const o=PRODUCTS[key];
@@ -662,16 +757,16 @@ function showProduct(key){
  box.append(el('h3',null,'Downloads'));
  const grid=el('div','files');
  o.fs.forEach(f=>{
-  const b=el('button','file');
-  b.append(el('b',null,f.kind),el('small',null,(f.kind==='Pack Image'?'JPG':'PDF')+' · '+mb(f.kb)));
-  b.onclick=async()=>{
-   b.disabled=true;
-   st.textContent='Fetching '+f.name+' …';
-   try{save(f.name,await get(f.path));b.classList.add('ok');}
-   catch(e){b.querySelector('small').textContent='Failed – tap to retry';}
-   b.disabled=false;
-  };
-  grid.append(b);
+  const card=el('div','file');
+  card.append(el('b',null,f.kind),el('small',null,(f.kind==='Pack Image'?'JPG':'PDF')+' · '+mb(f.kb)));
+  const acts=el('div','fa');
+  const pb=el('button','btn','Preview');
+  pb.onclick=()=>preview(f,o.p[0],()=>card.classList.add('ok'));
+  const b=el('button','btn dark','Download');
+  b.onclick=()=>download(f,b,()=>card.classList.add('ok'));
+  acts.append(pb,b);
+  card.append(acts);
+  grid.append(card);
  });
  box.append(grid);
  const zb=el('button','btn dark all','Download all (.zip)');
