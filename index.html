@@ -58,31 +58,19 @@ a.row:hover{background:#f3f5fb}
 .hero h2{font:700 clamp(24px,4vw,32px)/1.15 Poppins,sans-serif;margin:0;color:#112052}
 .hero p{margin:8px 0 10px;color:#444c63}
 .meta{font-size:13px;color:#5b6478}
-.tabs{display:flex;gap:4px;margin:20px 0 0;border-bottom:2px solid #dfe3ee;overflow-x:auto}
-.tabs button{font:600 14px Inter,sans-serif;background:none;border:0;border-bottom:3px solid transparent;margin-bottom:-2px;padding:10px 14px;color:#5b6478;cursor:pointer;white-space:nowrap}
-.tabs button.on{color:#112052;border-bottom-color:#e8157e}
-.panel{background:#fff;border:1px solid #dfe3ee;border-top:0;border-radius:0 0 12px 12px;padding:18px}
-.panel h3{font:600 16px Poppins,sans-serif;margin:0 0 10px;color:#112052}
-.panel h3+*{margin-top:0}
-.panel h3:not(:first-child){margin-top:22px}
-.facts{display:grid;grid-template-columns:max-content 1fr;gap:6px 18px;margin:0 0 18px}
-.facts dt{color:#5b6478}
-.facts dd{margin:0;font-weight:500}
-.related{display:flex;flex-wrap:wrap;gap:6px}
-.related a{font-size:13px;color:#14204a;text-decoration:none;background:#eef1f8;border-radius:999px;padding:5px 11px}
-.related a:hover{background:#dfe5f3}
-.dl{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:12px 0;border-top:1px solid #dfe3ee}
-.dl:first-of-type{border-top:0}
-.dl b{display:block;font-weight:600}
-.dl small{color:#5b6478}
-.dl .acts{display:flex;gap:6px}
-.dl a.btn{text-decoration:none}
-.viewer{width:100%;height:75vh;min-height:420px;border:1px solid #dfe3ee;border-radius:8px;background:#eef1f8}
-.note{font-size:13px;color:#5b6478;margin:10px 0 0}
-.note a{color:#112052}
+.panel{background:#fff;border:1px solid #dfe3ee;border-radius:14px;padding:20px;margin-top:16px}
+.panel h3{font:600 17px Poppins,sans-serif;margin:0 0 12px;color:#112052}
+.files{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.file{text-align:left;font:inherit;color:#14204a;background:#f6f7fb;border:1px solid #dfe3ee;border-radius:10px;padding:14px 16px;cursor:pointer;display:flex;flex-direction:column;gap:2px}
+.file::before{content:"⬇";color:#e8157e;font-size:18px;margin-bottom:4px}
+.file:hover{border-color:#112052;background:#fff}
+.file b{font-weight:600}
+.file small{color:#5b6478}
+.file.ok{background:#d3eee1;border-color:#9fd6bb}
+.file.ok::before{content:"✓"}
+.all{margin-top:14px;width:100%;padding:12px}
 @media(max-width:640px){
   .hero img{width:120px;height:120px}
-  .viewer{height:60vh}
   .logo{width:68px}
   .row{align-items:flex-start}
   .product-info{min-width:100%;flex-basis:100%}
@@ -637,7 +625,7 @@ function showList(){
  else window.scrollTo(0,listScroll);
 }
 
-function showProduct(key,tab){
+function showProduct(key){
 
  const o=PRODUCTS[key];
  if(!lv.hidden)listScroll=window.scrollY;
@@ -649,16 +637,12 @@ function showProduct(key,tab){
  document.title=o.p[0]+' · O MIX';
 
  const pack=o.fs.find(f=>f.kind==='Pack Image');
- const docs=o.fs.filter(f=>f.kind!=='Pack Image');
- const tds=o.fs.find(f=>f.kind==='TDS');
- const totalKb=o.fs.reduce((a,f)=>a+f.kb,0);
 
- // Back + breadcrumb
  const back=el('a','back','← All products');
  back.href='#';
- pvw.append(back,el('div','crumb',o.label+(o.sys?'':' · '+o.title)));
+ pvw.append(back,el('div','crumb',o.sys?o.label:o.label+' · '+o.title));
 
- // Hero
+ // Product: image, name, description
  const hero=el('div','hero');
  if(pack){
   const img=el('img');
@@ -670,141 +654,39 @@ function showProduct(key,tab){
  const hd=el('div');
  hd.append(el('h2',null,o.p[0]));
  if(o.desc)hd.append(el('p',null,o.desc));
- hd.append(el('div','meta',docs.length+' documents'+(pack?' + pack image':'')+' · '+mb(totalKb)));
  hero.append(hd);
  pvw.append(hero);
 
- // Tabs
- const TABS=[['overview','Overview'],['downloads','Downloads']];
- if(tds)TABS.push(['datasheet','Data Sheet']);
- const tabs=el('div','tabs');
- tabs.setAttribute('role','tablist');
- const panels={};
-
- // Overview
- const ov=el('div','panel');
- ov.append(el('h3',null,'About this '+(o.sys?'system':'product')));
- if(o.desc)ov.append(el('p',null,o.desc));
- const dlist=el('dl','facts');
- const fact=(k,v)=>{dlist.append(el('dt',null,k),el('dd',null,v));};
- fact(o.sys?'Type':'Category',o.sys?'Integrated system':o.label+' – '+o.title);
- fact('Documents',docs.map(f=>f.kind).join(', ')||'—');
- fact('Total size',mb(totalKb));
- ov.append(dlist);
- if(tds){
-  const n=el('p','note');
-  n.append('Full technical details — properties, uses, application and packaging — are in the ');
-  const a=el('a',null,'Technical Data Sheet');
-  a.href='#/'+key+'/datasheet';
-  n.append(a,'.');
-  ov.append(n);
- }
- const others=o.items.filter(x=>x!==o.p);
- if(others.length){
-  ov.append(el('h3',null,'Other '+(o.sys?'systems':'products in '+o.title)));
-  const rel=el('div','related');
-  const pre=key.split('/')[0];
-  others.forEach(x=>{
-   const a=el('a',null,x[0]);
-   a.href='#/'+pre+'/'+x[1];
-   rel.append(a);
-  });
-  ov.append(rel);
- }
- panels.overview=ov;
-
- // Downloads
- const dl=el('div','panel');
- dl.append(el('h3',null,'Downloads'));
+ // Downloads: one click per file
+ const box=el('div','panel');
+ box.append(el('h3',null,'Downloads'));
+ const grid=el('div','files');
  o.fs.forEach(f=>{
-  const r=el('div','dl');
-  const t=el('div');
-  t.append(el('b',null,f.kind+(f.kind==='Pack Image'?' (JPG)':' (PDF)')),el('small',null,f.name+' · '+mb(f.kb)));
-  const acts=el('div','acts');
-  const open=el('a','btn','Open');
-  open.href=f.path;
-  open.target='_blank';
-  open.rel='noopener';
-  const b=el('button','btn dark','Download');
+  const b=el('button','file');
+  b.append(el('b',null,f.kind),el('small',null,(f.kind==='Pack Image'?'JPG':'PDF')+' · '+mb(f.kb)));
   b.onclick=async()=>{
    b.disabled=true;
    st.textContent='Fetching '+f.name+' …';
-   try{save(f.name,await get(f.path));b.textContent='Downloaded ✓';}
-   catch(e){b.textContent='Failed – retry';}
+   try{save(f.name,await get(f.path));b.classList.add('ok');}
+   catch(e){b.querySelector('small').textContent='Failed – tap to retry';}
    b.disabled=false;
   };
-  acts.append(open,b);
-  r.append(t,acts);
-  dl.append(r);
+  grid.append(b);
  });
- const zr=el('div','dl');
- const zt=el('div');
- zt.append(el('b',null,'All documents (.zip)'),el('small',null,o.zipName+' · '+mb(totalKb)));
- const zb=el('button','btn dark','Download all');
+ box.append(grid);
+ const zb=el('button','btn dark all','Download all (.zip)');
  zb.onclick=()=>zip(o.zipName,o.fs.map(f=>[f.sub+'/'+f.name,f]),zb);
- zr.append(zt,zb);
- dl.append(zr);
- panels.downloads=dl;
+ box.append(zb);
+ pvw.append(box);
 
- // Data sheet viewer (loaded on first open)
- if(tds){
-  const ds=el('div','panel');
-  ds.append(el('h3',null,'Technical Data Sheet'));
-  const n=el('p','note');
-  n.append('Can’t see the preview? ');
-  const a=el('a',null,'Open the PDF in a new tab');
-  a.href=tds.path;a.target='_blank';a.rel='noopener';
-  n.append(a,'.');
-  ds.append(n);
-  ds.load=()=>{
-   if(ds.querySelector('iframe'))return;
-   const fr=el('iframe','viewer');
-   fr.title=o.p[0]+' Technical Data Sheet';
-   fr.src=tds.path;
-   n.before(fr);
-  };
-  panels.datasheet=ds;
- }
-
- const sel=id=>{
-  if(!panels[id])id='overview';
-  tabs.querySelectorAll('button').forEach(b=>{
-   const on=b.dataset.t===id;
-   b.classList.toggle('on',on);
-   b.setAttribute('aria-selected',on);
-  });
-  Object.entries(panels).forEach(([k,p])=>p.hidden=k!==id);
-  panels[id].load?.();
- };
-
- TABS.forEach(([id,label])=>{
-  const b=el('button',null,label);
-  b.dataset.t=id;
-  b.setAttribute('role','tab');
-  b.onclick=()=>history.replaceState(null,'','#/'+key+(id==='overview'?'':'/'+id))||sel(id);
-  tabs.append(b);
- });
-
- pvw.append(tabs,...Object.values(panels));
- sel(tab);
  window.scrollTo(0,0);
 }
 
-let current='';
 function route(){
- const m=location.hash.match(/^#\/([^/]+\/[^/]+)(?:\/([a-z]+))?$/);
- if(m&&PRODUCTS[m[1]]){
-  if(current===m[1]&&!pv.hidden){
-   pvw.querySelector(`.tabs button[data-t="${m[2]||'overview'}"]`)?.click();
-   return;
-  }
-  current=m[1];
-  showProduct(m[1],m[2]);
- }else{
-  current='';
-  if(!pv.hidden)showList();
-  else if(/^#c\d+$/.test(location.hash))document.querySelector(location.hash)?.scrollIntoView();
- }
+ const m=location.hash.match(/^#\/([^/]+\/[^/]+)/);
+ if(m&&PRODUCTS[m[1]])showProduct(m[1]);
+ else if(!pv.hidden)showList();
+ else if(/^#c\d+$/.test(location.hash))document.querySelector(location.hash)?.scrollIntoView();
 }
 
 window.addEventListener('hashchange',route);
